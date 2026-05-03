@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>TF Group</title>
+
+<style>
+body {
+    margin: 0;
+    font-family: Arial;
+    background: black;
+    color: #00ff88;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    padding: 15px;
+    border-bottom: 2px solid #00ff88;
+}
+
+#title {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+input, select {
+    background: black;
+    color: #00ff88;
+    border: 1px solid #00ff88;
+    padding: 5px;
+}
+
+.container {
+    padding: 20px;
+}
+
+.grid {
+    display: flex;
+    gap: 30px;
+    justify-content: center;
+}
+
+.brand {
+    cursor: pointer;
+    text-align: center;
+}
+
+.brand img {
+    width: 100px;
+}
+
+.car-list, .car-detail {
+    display: none;
+}
+
+.parts {
+    display: flex;
+    justify-content: space-between;
+}
+
+.left img {
+    width: 400px;
+}
+
+.part {
+    margin: 5px 0;
+}
+
+button {
+    background: black;
+    color: #00ff88;
+    border: 1px solid #00ff88;
+    padding: 5px;
+    cursor: pointer;
+}
+</style>
+
+</head>
+<body>
+
+<header>
+    <div id="title">TF Group</div>
+
+    <input type="text" placeholder="Search...">
+
+    <div>
+        <select>
+            <option>Year</option>
+            <option>1990-2000</option>
+            <option>2000-2010</option>
+            <option>2010-2020</option>
+        </select>
+
+        <select>
+            <option>Type</option>
+            <option>Sedan</option>
+            <option>SUV</option>
+            <option>Sports</option>
+        </select>
+    </div>
+</header>
+
+<div class="container">
+
+<!-- BRANDS -->
+<div id="brands" class="grid">
+
+    <div class="brand" onclick="showCars('mercedes')">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/9/90/Mercedes-Logo.svg">
+        <p>Mercedes</p>
+    </div>
+
+    <div class="brand" onclick="showCars('bmw')">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/4/44/BMW.svg">
+        <p>BMW</p>
+    </div>
+
+    <div class="brand" onclick="showCars('dodge')">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/7/7e/Dodge_logo.svg">
+        <p>Dodge</p>
+    </div>
+
+    <div class="brand" onclick="showCars('toyota')">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/9/9d/Toyota_carlogo.svg">
+        <p>Toyota</p>
+    </div>
+
+</div>
+
+<!-- CAR LIST -->
+<div id="carList" class="car-list"></div>
+
+<!-- CAR DETAIL -->
+<div id="carDetail" class="car-detail">
+    <button onclick="goBack()">⬅ Back</button>
+
+    <div class="parts">
+        <div class="left">
+            <img id="carImage" src="">
+        </div>
+
+        <div class="right" id="partsList"></div>
+    </div>
+
+    <h3>Total Price:</h3>
+    <p id="total"></p>
+</div>
+
+</div>
+  
+<script>
+
+const cars = {
+    mercedes: [
+        {name: "C-Class W204 (2010–2014)", img: "images/mercedes-c-w204.jpg"},
+        {name: "E-Class W212 (2010–2015)", img: "images/mercedes-e-w212.jpg"},
+        {name: "S-Class W221 (2010–2013)", img: "images/mercedes-s-w221.jpg"}
+    ],
+    bmw: [
+        {name: "3 Series E90/F30 (2010–2015)", img: "images/bmw-3series.jpg"},
+        {name: "5 Series F10 (2010–2015)", img: "images/bmw-5series.jpg"},
+        {name: "M3 E92 (2010–2013)", img: "images/bmw-m3-e92.jpg"}
+    ],
+    audi: [
+        {name: "A4 B8 (2010–2015)", img: "images/audi-a4-b8.jpg"},
+        {name: "A6 C7 (2011–2015)", img: "images/audi-a6-c7.jpg"},
+        {name: "R8 (2010–2015)", img: "images/audi-r8.jpg"}
+    ],
+    toyota: [
+        {name: "Corolla E140/E170 (2010–2015)", img: "images/toyota-corolla.jpg"},
+        {name: "Camry XV40/XV50 (2010–2015)", img: "images/toyota-camry.jpg"},
+        {name: "Land Cruiser J200 (2010–2015)", img: "images/toyota-landcruiser.jpg"}
+    ]
+};
+
+const parts = [
+    ["Engine", 3000, 8000],
+    ["Exhaust", 200, 1000],
+    ["Turbo", 500, 3000],
+    ["Compressor", 400, 2500],
+    ["Tire", 100, 400],
+    ["Disk", 150, 600],
+    ["Gearbox", 1500, 5000],
+    ["Front Bumper", 300, 1200],
+    ["Back Bumper", 300, 1200],
+    ["Battery", 100, 400],
+    ["Front Lights", 200, 800],
+    ["Back Lights", 150, 600],
+    ["Seats", 500, 3000],
+    ["Body Kit", 1000, 5000],
+    ["Brake Pads", 100, 500],
+    ["Spoiler", 200, 1000]
+];
+
+function showCars(brand) {
+    document.getElementById("brands").style.display = "none";
+    const list = document.getElementById("carList");
+    list.style.display = "block";
+    list.innerHTML = "";
+
+    cars[brand].forEach(car => {
+        const div = document.createElement("div");
+        div.innerHTML = `<p style="cursor:pointer" onclick="showDetail('${car.img}', '${car.name}')">${car.name}</p>`;
+        list.appendChild(div);
+    });
+}
+
+function showDetail(img, name) {
+    document.getElementById("carList").style.display = "none";
+    document.getElementById("carDetail").style.display = "block";
+
+    document.getElementById("carImage").src = img;
+
+    const partsDiv = document.getElementById("partsList");
+    partsDiv.innerHTML = `<h2>${name}</h2>`;
+
+    parts.forEach(p => {
+        const div = document.createElement("div");
+        div.className = "part";
+
+        div.innerHTML = `
+            <input type="checkbox" onchange="calculate()"
+            data-low="${p[1]}" data-high="${p[2]}">
+            ${p[0]} ($${p[1]} - $${p[2]})
+            <br>
+            <a href="#" target="_blank">Buy</a>
+        `;
+
+        partsDiv.appendChild(div);
+    });
+}
+
+function calculate() {
+    let low = 0;
+    let high = 0;
+
+    document.querySelectorAll("input[type=checkbox]:checked").forEach(el => {
+        low += Number(el.dataset.low);
+        high += Number(el.dataset.high);
+    });
+
+    document.getElementById("total").innerText =
+        `$${low} - $${high}`;
+}
+
+function goBack() {
+    document.getElementById("carDetail").style.display = "none";
+    document.getElementById("carList").style.display = "none";
+    document.getElementById("brands").style.display = "flex";
+}
+
+</script>
+
+</body>
+</html>
